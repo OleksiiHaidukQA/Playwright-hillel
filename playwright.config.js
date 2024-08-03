@@ -17,8 +17,6 @@ export default defineConfig({
   use: {
     headless: false,
     baseURL: process.env.BASE_URL,
-    viewport: { width: 1920, height: 1080 },
-    baseURL: process.env.BASE_URL,
     httpCredentials: {
       username: process.env.USERNAME,
       password: process.env.PASSWORD
@@ -38,13 +36,12 @@ export default defineConfig({
         baseURL: process.env.BASE_URL,
       },
     },
-  ],
-    {
-      name: 'dev',
-      use: {
-        ...devices['Desktop Chrome'],
-        baseURL: 'https://qauto2.forstudy.space/',
-      },
-    }
+    // {
+    //   name: 'dev',
+    //   use: {
+    //     ...devices['Desktop Chrome'],
+    //     baseURL: 'https://qauto2.forstudy.space/',
+    //   },
+    // }
   ]
 });

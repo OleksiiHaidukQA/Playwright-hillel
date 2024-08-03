@@ -32,18 +32,21 @@ test.describe('registration flow', () => {
     await page.focus(registrationSelectors.lastName);
     await expect(page.locator(registrationSelectors.invalidFeedback)).toContainText(errors.invalidName);
     await expect(page.locator(registrationSelectors.invalidFeedback)).toContainText(errors.nameLength);
+    await expect(page.locator(registrationSelectors.name)).toHaveCSS('border-color', 'rgb(220, 53, 69)');
   });
 
   test('error while checking last name', async ({ page }) => {
     await page.fill(registrationSelectors.lastName, '1');
     await page.focus(registrationSelectors.name);
     await expect(page.locator(registrationSelectors.invalidFeedback)).toContainText(errors.lastNameInvalid);
+    await expect(page.locator(registrationSelectors.lastName)).toHaveCSS('border-color', 'rgb(220, 53, 69)');
   });
 
   test('error while name is empty', async ({ page }) => {
     await page.focus(registrationSelectors.name);
     await page.focus(registrationSelectors.lastName);
     await expect(page.getByText('Name required')).toBeVisible();
+    await expect(page.locator(registrationSelectors.name)).toHaveCSS('border-color', 'rgb(220, 53, 69)');
   });
 
   test('error while last name is empty', async ({ page }) => {
@@ -51,6 +54,7 @@ test.describe('registration flow', () => {
     await page.focus(registrationSelectors.name);
     await expect(page.getByText('Last name required')).toBeVisible();
     await expect(page.locator(registrationSelectors.submit)).toBeDisabled();
+    await expect(page.locator(registrationSelectors.lastName)).toHaveCSS('border-color', 'rgb(220, 53, 69)');
   });
 
   test('error while email is invalid', async ({ page }) => {
@@ -58,17 +62,20 @@ test.describe('registration flow', () => {
     const nameMock = generateChars.getRandomName(nameLength);
     const invalidEmail = 'invalidEmail';
     const passwordMock = generateChars.getRandomPassword(nameLength);
-
+  
     await page.fill(registrationSelectors.name, nameMock);
     await page.fill(registrationSelectors.lastName, nameMock);
     await page.fill(registrationSelectors.email, invalidEmail);
-    await expect(page.getByText('Email is incorrect')).toBeVisible;
+    await page.focus(registrationSelectors.password); // Перемещаем фокус для активации валидации
+    await expect(page.getByText('Email is incorrect')).toBeVisible();
+    await expect(page.locator(registrationSelectors.email)).toHaveCSS('border-color', 'rgb(220, 53, 69)');
   });
 
   test('error while email is empty', async ({ page }) => {
     await page.focus(registrationSelectors.email);
-    await page.focus(registrationSelectors.password);
-    await expect(page.getByText('Email is incorrect')).toBeVisible;
+    await page.focus(registrationSelectors.password); // Перемещаем фокус для активации валидации
+    await expect(page.getByText('Email required')).toBeVisible();
+    await expect(page.locator(registrationSelectors.email)).toHaveCSS('border-color', 'rgb(220, 53, 69)');
   });
 
   test('error while password is invalid', async ({ page }) => {
@@ -85,27 +92,31 @@ test.describe('registration flow', () => {
     await expect(page.locator(registrationSelectors.submit)).toBeDisabled();
     
     await expect(page.locator(registrationSelectors.invalidFeedbackP)).toContainText(errors.passwordInvalid);
+    await expect(page.locator(registrationSelectors.password)).toHaveCSS('border-color', 'rgb(220, 53, 69)');
   });
 
   test('error while password is empty', async ({ page }) => {
     await page.focus(registrationSelectors.password);
     await page.focus(registrationSelectors.repeatPassword);
     await expect(page.locator(registrationSelectors.invalidFeedbackP)).toContainText(errors.passwordRequired);
-});
+    await expect(page.locator(registrationSelectors.password)).toHaveCSS('border-color', 'rgb(220, 53, 69)');
+  });
 
   test('error while passwords do not match', async ({ page }) => {
     const nameLength = 10;
     const nameMock = generateChars.getRandomName(nameLength);
     const emailMock = generateChars.getRandomEmail(nameLength);
     const passwordMock = generateChars.getRandomPassword(nameLength);
-    const invalidPassword = 'short1';
+    const invalidPassword = 'DifferentPas1!';
 
     await page.fill(registrationSelectors.name, nameMock);
     await page.fill(registrationSelectors.lastName, nameMock);
     await page.fill(registrationSelectors.email, emailMock);
     await page.fill(registrationSelectors.password, passwordMock);
     await page.fill(registrationSelectors.repeatPassword, invalidPassword);
+    await page.locator(registrationSelectors.repeatPassword).blur(); // Добавление blur для активации валидации
     await expect(page.locator(registrationSelectors.invalidFeedbackP)).toContainText(errors.passwordDoNotMatch);
+    await expect(page.locator(registrationSelectors.repeatPassword)).toHaveCSS('border-color', 'rgb(220, 53, 69)');
   });
 
   test('error while re-enter password is empty', async ({ page }) => {
