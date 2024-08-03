@@ -4,12 +4,14 @@ import dotenv from 'dotenv';
 dotenv.config();
 
 export default defineConfig({
-  testMatch: '/tests/**/*.spec.js',
-  testIgnore: '/tests/**/*.skip.spec.js',
-  globalSetup: process.env.ENV === 'stage' ? './global.setup.js' : undefined,
+
+  testMatch: '**/tests/registration.spec.js',
+  testIgnore: '**/tests/**/*.skip.spec.js',
+  globalSetup: './global.setup.js',
   globalTeardown: './global.teardown.js',
   fullyParallel: false,
   forbidOnly: !!process.env.CI,
+  retries: 1,
   workers: 3,
   reporter: [['html', { outputFolder: 'playwright-report' }]],
   use: {
@@ -28,28 +30,18 @@ export default defineConfig({
   },
   projects: [
     {
-      name: "setup:stage",
-      testMatch: 'tests/setup/**/*.setup.js'
-    },
-    {
-      name: 'teardown:stage',
-      testMatch: 'tests/teardown/**/*.teardown.js'
-    },
-    {
       name: 'stage',
       use: {
         ...devices['Desktop Chrome'],
         baseURL: process.env.BASE_URL,
       },
-      dependencies: ['setup:stage'],
-      teardown: 'teardown:stage'
     },
-    {
-      name: 'dev',
-      use: {
-        ...devices['Desktop Chrome'],
-        baseURL: 'https://qauto2.forstudy.space/',
-      },
-    }
+    // {
+    //   name: 'dev',
+    //   use: {
+    //     ...devices['Desktop Chrome'],
+    //     baseURL: 'https://qauto2.forstudy.space/',
+    //   },
+    // }
   ]
 });
