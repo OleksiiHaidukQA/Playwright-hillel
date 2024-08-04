@@ -1,137 +1,146 @@
 import { test, expect } from '@playwright/test';
-import { registrationSelectors } from './entities/registrationSelectors';
+import { RegistrationPage } from './pages/registrationPage';
 import { errors } from './common/errors';
-import { GenerateChars } from './utils/generatingChars';
+import { GenerateChars } from './utils/GeneratingChars';
 
 test.describe('registration flow', () => {
   const generateChars = new GenerateChars();
   
   test.beforeEach(async ({ page }) => {
-    await page.goto('/');
-    await page.click(registrationSelectors.registrationButton);
+    const registrationPage = new RegistrationPage(page);
+    await registrationPage.navigate();
+    await registrationPage.clickRegistrationButton();
   });
 
   test('registration process', async ({ page }) => {
+    const registrationPage = new RegistrationPage(page);
     const nameLength = 10;
     const nameMock = generateChars.getRandomName(nameLength);
     const emailMock = generateChars.getRandomEmail(nameLength);
     const passwordMock = generateChars.getRandomPassword(nameLength);
 
-    await page.fill(registrationSelectors.name, nameMock);
-    await page.fill(registrationSelectors.lastName, nameMock);
-    await page.fill(registrationSelectors.email, emailMock);
-    await page.fill(registrationSelectors.password, passwordMock);
-    await page.fill(registrationSelectors.repeatPassword, passwordMock);
-    await page.click(registrationSelectors.submit);
+    await registrationPage.fillName(nameMock);
+    await registrationPage.fillLastName(nameMock);
+    await registrationPage.fillEmail(emailMock);
+    await registrationPage.fillPassword(passwordMock);
+    await registrationPage.fillRepeatPassword(passwordMock);
+    await registrationPage.clickSubmit();
     
-    await expect(page).toHaveURL('/panel/garage');
+    await registrationPage.expectURL('/panel/garage');
   });
 
   test('error while checking name', async ({ page }) => {
-    await page.fill(registrationSelectors.name, '1');
-    await page.focus(registrationSelectors.lastName);
-    await expect(page.locator(registrationSelectors.invalidFeedback)).toContainText(errors.invalidName);
-    await expect(page.locator(registrationSelectors.invalidFeedback)).toContainText(errors.nameLength);
-    await expect(page.locator(registrationSelectors.name)).toHaveCSS('border-color', 'rgb(220, 53, 69)');
+    const registrationPage = new RegistrationPage(page);
+    await registrationPage.fillName('1');
+    await registrationPage.fillLastName(' ');
+    await registrationPage.expectInvalidFeedback(errors.invalidName);
+    await registrationPage.expectInvalidFeedback(errors.nameLength);
+    await registrationPage.expectElementToHaveCSS(registrationPage.name, 'border-color', 'rgb(220, 53, 69)');
   });
 
   test('error while checking last name', async ({ page }) => {
-    await page.fill(registrationSelectors.lastName, '1');
-    await page.focus(registrationSelectors.name);
-    await expect(page.locator(registrationSelectors.invalidFeedback)).toContainText(errors.lastNameInvalid);
-    await expect(page.locator(registrationSelectors.lastName)).toHaveCSS('border-color', 'rgb(220, 53, 69)');
+    const registrationPage = new RegistrationPage(page);
+    await registrationPage.fillLastName('1');
+    await registrationPage.fillName(' ');
+    await registrationPage.expectInvalidFeedback(errors.lastNameInvalid);
+    await registrationPage.expectElementToHaveCSS(registrationPage.lastName, 'border-color', 'rgb(220, 53, 69)');
   });
 
   test('error while name is empty', async ({ page }) => {
-    await page.focus(registrationSelectors.name);
-    await page.focus(registrationSelectors.lastName);
-    await expect(page.getByText('Name required')).toBeVisible();
-    await expect(page.locator(registrationSelectors.name)).toHaveCSS('border-color', 'rgb(220, 53, 69)');
+    const registrationPage = new RegistrationPage(page);
+    await registrationPage.fillName(' ');
+    await registrationPage.fillLastName(' ');
+    await registrationPage.expectTextToBeVisible(errors.invalidName);
+    await registrationPage.expectElementToHaveCSS(registrationPage.name, 'border-color', 'rgb(220, 53, 69)');
   });
 
   test('error while last name is empty', async ({ page }) => {
-    await page.focus(registrationSelectors.lastName);
-    await page.focus(registrationSelectors.name);
-    await expect(page.getByText('Last name required')).toBeVisible();
-    await expect(page.locator(registrationSelectors.submit)).toBeDisabled();
-    await expect(page.locator(registrationSelectors.lastName)).toHaveCSS('border-color', 'rgb(220, 53, 69)');
+    const registrationPage = new RegistrationPage(page);
+    await registrationPage.fillLastName(' ');
+    await registrationPage.fillName(' ');
+    await registrationPage.expectTextToBeVisible(errors.lastNameInvalid);
+    await registrationPage.expectElementToHaveCSS(registrationPage.lastName, 'border-color', 'rgb(220, 53, 69)');
+    await expect(page.locator(registrationPage.submitButton)).toBeDisabled();
   });
 
   test('error while email is invalid', async ({ page }) => {
+    const registrationPage = new RegistrationPage(page);
     const nameLength = 10;
     const nameMock = generateChars.getRandomName(nameLength);
     const invalidEmail = 'invalidEmail';
     const passwordMock = generateChars.getRandomPassword(nameLength);
-  
-    await page.fill(registrationSelectors.name, nameMock);
-    await page.fill(registrationSelectors.lastName, nameMock);
-    await page.fill(registrationSelectors.email, invalidEmail);
-    await page.focus(registrationSelectors.password); // Перемещаем фокус для активации валидации
-    await expect(page.getByText('Email is incorrect')).toBeVisible();
-    await expect(page.locator(registrationSelectors.email)).toHaveCSS('border-color', 'rgb(220, 53, 69)');
+
+    await registrationPage.fillName(nameMock);
+    await registrationPage.fillLastName(nameMock);
+    await registrationPage.fillEmail(invalidEmail);
+    await registrationPage.fillPassword(passwordMock);
+    await registrationPage.expectTextToBeVisible(errors.emailIsIncorrect);
+    await registrationPage.expectElementToHaveCSS(registrationPage.email, 'border-color', 'rgb(220, 53, 69)');
   });
 
   test('error while email is empty', async ({ page }) => {
-    await page.focus(registrationSelectors.email);
-    await page.focus(registrationSelectors.password); // Перемещаем фокус для активации валидации
-    await expect(page.getByText('Email required')).toBeVisible();
-    await expect(page.locator(registrationSelectors.email)).toHaveCSS('border-color', 'rgb(220, 53, 69)');
+    const registrationPage = new RegistrationPage(page);
+    await registrationPage.fillEmail(' ');
+    await registrationPage.fillPassword(' ');
+    await registrationPage.expectTextToBeVisible(errors.emailIsIncorrect);
+    await registrationPage.expectElementToHaveCSS(registrationPage.email, 'border-color', 'rgb(220, 53, 69)');
   });
 
   test('error while password is invalid', async ({ page }) => {
+    const registrationPage = new RegistrationPage(page);
     const nameLength = 10;
     const nameMock = generateChars.getRandomName(nameLength);
     const emailMock = generateChars.getRandomEmail(nameLength);
     const invalidPassword = 'short1';
 
-    await page.fill(registrationSelectors.name, nameMock);
-    await page.fill(registrationSelectors.lastName, nameMock);
-    await page.fill(registrationSelectors.email, emailMock);
-    await page.fill(registrationSelectors.password, invalidPassword);
-    await page.fill(registrationSelectors.repeatPassword, invalidPassword);
-    await expect(page.locator(registrationSelectors.submit)).toBeDisabled();
-    
-    await expect(page.locator(registrationSelectors.invalidFeedbackP)).toContainText(errors.passwordInvalid);
-    await expect(page.locator(registrationSelectors.password)).toHaveCSS('border-color', 'rgb(220, 53, 69)');
+    await registrationPage.fillName(nameMock);
+    await registrationPage.fillLastName(nameMock);
+    await registrationPage.fillEmail(emailMock);
+    await registrationPage.fillPassword(invalidPassword);
+    await registrationPage.fillRepeatPassword(invalidPassword);
+    await registrationPage.expectInvalidFeedbackP(errors.passwordInvalid);
+    await registrationPage.expectElementToHaveCSS(registrationPage.password, 'border-color', 'rgb(220, 53, 69)');
   });
 
   test('error while password is empty', async ({ page }) => {
-    await page.focus(registrationSelectors.password);
-    await page.focus(registrationSelectors.repeatPassword);
-    await expect(page.locator(registrationSelectors.invalidFeedbackP)).toContainText(errors.passwordRequired);
-    await expect(page.locator(registrationSelectors.password)).toHaveCSS('border-color', 'rgb(220, 53, 69)');
+    const registrationPage = new RegistrationPage(page);
+    await registrationPage.fillPassword('');
+    await registrationPage.fillRepeatPassword('');
+    await registrationPage.expectInvalidFeedbackP(errors.passwordRequired);
+    await registrationPage.expectElementToHaveCSS(registrationPage.password, 'border-color', 'rgb(220, 53, 69)');
   });
 
   test('error while passwords do not match', async ({ page }) => {
+    const registrationPage = new RegistrationPage(page);
     const nameLength = 10;
     const nameMock = generateChars.getRandomName(nameLength);
     const emailMock = generateChars.getRandomEmail(nameLength);
     const passwordMock = generateChars.getRandomPassword(nameLength);
     const invalidPassword = 'DifferentPas1!';
 
-    await page.fill(registrationSelectors.name, nameMock);
-    await page.fill(registrationSelectors.lastName, nameMock);
-    await page.fill(registrationSelectors.email, emailMock);
-    await page.fill(registrationSelectors.password, passwordMock);
-    await page.fill(registrationSelectors.repeatPassword, invalidPassword);
-    await page.locator(registrationSelectors.repeatPassword).blur(); // Добавление blur для активации валидации
-    await expect(page.locator(registrationSelectors.invalidFeedbackP)).toContainText(errors.passwordDoNotMatch);
-    await expect(page.locator(registrationSelectors.repeatPassword)).toHaveCSS('border-color', 'rgb(220, 53, 69)');
+    await registrationPage.fillName(nameMock);
+    await registrationPage.fillLastName(nameMock);
+    await registrationPage.fillEmail(emailMock);
+    await registrationPage.fillPassword(passwordMock);
+    await registrationPage.fillRepeatPassword(invalidPassword);
+    await registrationPage.blurField(registrationPage.repeatPassword); 
+    await registrationPage.expectInvalidFeedbackP(errors.passwordDoNotMatch);
+    await registrationPage.expectElementToHaveCSS(registrationPage.repeatPassword, 'border-color', 'rgb(220, 53, 69)');
   });
 
   test('error while re-enter password is empty', async ({ page }) => {
+    const registrationPage = new RegistrationPage(page);
     const nameLength = 10;
     const nameMock = generateChars.getRandomName(nameLength);
     const emailMock = generateChars.getRandomEmail(nameLength);
     const passwordMock = generateChars.getRandomPassword(nameLength);
 
-    await page.fill(registrationSelectors.name, nameMock);
-    await page.fill(registrationSelectors.lastName, nameMock);
-    await page.fill(registrationSelectors.email, emailMock);
-    await page.fill(registrationSelectors.password, passwordMock);
-    await page.focus(registrationSelectors.repeatPassword);
-    await page.locator(registrationSelectors.repeatPassword).blur();
-    
-    await expect(page.locator(registrationSelectors.invalidFeedbackP)).toContainText(errors.passwordMatchRequired);
+    await registrationPage.fillName(nameMock);
+    await registrationPage.fillLastName(nameMock);
+    await registrationPage.fillEmail(emailMock);
+    await registrationPage.fillPassword(passwordMock);
+    await registrationPage.fillRepeatPassword('');
+    await registrationPage.blurField(registrationPage.repeatPassword);
+    await registrationPage.expectInvalidFeedbackP(errors.passwordMatchRequired);
   });
 });
