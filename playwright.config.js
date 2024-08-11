@@ -4,9 +4,7 @@ import dotenv from 'dotenv';
 dotenv.config();
 
 export default defineConfig({
-
-  testMatch: '**/tests/registration.spec.js',
-  testIgnore: '**/tests/**/*.skip.spec.js',
+  testDir: './tests', // Указание директории с тестами
   globalSetup: './global.setup.js',
   globalTeardown: './global.teardown.js',
   fullyParallel: false,
@@ -17,6 +15,7 @@ export default defineConfig({
   use: {
     headless: false,
     baseURL: process.env.BASE_URL,
+    storageState: 'storageState.json',
     httpCredentials: {
       username: process.env.USERNAME,
       password: process.env.PASSWORD
@@ -30,18 +29,10 @@ export default defineConfig({
   },
   projects: [
     {
-      name: 'stage',
+      name: 'chromium',
       use: {
         ...devices['Desktop Chrome'],
-        baseURL: process.env.BASE_URL,
       },
     },
-    // {
-    //   name: 'dev',
-    //   use: {
-    //     ...devices['Desktop Chrome'],
-    //     baseURL: 'https://qauto2.forstudy.space/',
-    //   },
-    // }
-  ]
+  ],
 });
