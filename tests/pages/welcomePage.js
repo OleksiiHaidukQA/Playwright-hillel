@@ -1,16 +1,24 @@
-import BasePage from './BasePage';
-
-export default class WelcomePage extends BasePage {
+class WelcomePage {
     constructor(page) {
-        super(page, '/');
-        this.signInButton = page.locator('button:has-text("Sign In")');
+        this.page = page;
+        this.url = process.env.BASE_URL; 
     }
-    
+
     async navigate() {
         await this.page.goto(this.url);
     }
 
     async clickSignInButton() {
-        await this.signInButton.click();
+        // Проверяем, находится ли пользователь на странице /panel/garage
+        const currentUrl = await this.page.url();
+        if (currentUrl.includes('/panel/garage')) {
+            // Если да, пропускаем клик на "Sign In"
+            return;
+        }
+
+        // Если нет, выполняем клик по кнопке "Sign In"
+        await this.page.click('button:has-text("Sign In")');
     }
 }
+
+export default WelcomePage;

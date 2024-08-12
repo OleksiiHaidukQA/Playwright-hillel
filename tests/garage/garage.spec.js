@@ -1,5 +1,5 @@
-import { test, expect } from '../../data/fixtures/userGaragePage';
-import GaragePage from '../pages/garagePage';
+import { myFixture as test, expect } from '../../fixtures/userGaragePage';
+
 
 test.describe('Garage Page', () => {
     test.beforeEach(async ({ garagePage }) => {
