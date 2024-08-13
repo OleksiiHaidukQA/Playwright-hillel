@@ -1,17 +1,16 @@
 import { defineConfig, devices } from '@playwright/test';
 import dotenv from 'dotenv';
+import { USER1_STORAGE_STATE_PATH } from './data/constants';
 
 dotenv.config();
 
 export default defineConfig({
-
-  testMatch: '**/tests/registration.spec.js',
-  testIgnore: '**/tests/**/*.skip.spec.js',
+  testDir: './tests',
   globalSetup: './global.setup.js',
   globalTeardown: './global.teardown.js',
   fullyParallel: false,
   forbidOnly: !!process.env.CI,
-  retries: 1,
+  retries: 0,
   workers: 3,
   reporter: [['html', { outputFolder: 'playwright-report' }]],
   use: {
@@ -30,18 +29,16 @@ export default defineConfig({
   },
   projects: [
     {
-      name: 'stage',
+      name: 'setup',
+      testMatch: 'tests/setup/saveStorageState.js', 
+    },
+    {
+      name: 'chromium',
+      dependencies: ['setup'], 
       use: {
         ...devices['Desktop Chrome'],
-        baseURL: process.env.BASE_URL,
+        storageState: USER1_STORAGE_STATE_PATH,
       },
     },
-    // {
-    //   name: 'dev',
-    //   use: {
-    //     ...devices['Desktop Chrome'],
-    //     baseURL: 'https://qauto2.forstudy.space/',
-    //   },
-    // }
-  ]
+  ],
 });
