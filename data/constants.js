@@ -1,1 +1,1 @@
-export const USER1_STORAGE_STATE_PATH = './data/user1.json';
+export const USER1_STORAGE_STATE_PATH = './state/user1.json';

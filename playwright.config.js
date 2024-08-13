@@ -16,7 +16,6 @@ export default defineConfig({
   use: {
     headless: false,
     baseURL: process.env.BASE_URL,
-    storageState: USER1_STORAGE_STATE_PATH, 
     httpCredentials: {
       username: process.env.USERNAME,
       password: process.env.PASSWORD
@@ -38,6 +37,7 @@ export default defineConfig({
       dependencies: ['setup'], 
       use: {
         ...devices['Desktop Chrome'],
+        storageState: USER1_STORAGE_STATE_PATH,
       },
     },
   ],
