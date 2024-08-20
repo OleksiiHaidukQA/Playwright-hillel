@@ -5,7 +5,7 @@ dotenv.config();
 
 export default defineConfig({
 
-  testMatch: '**/tests/registration.spec.js',
+  testMatch: ['**/tests/profile/profile.mock.spec.js', '**/tests/api/cars.api.spec.js'],
   testIgnore: '**/tests/**/*.skip.spec.js',
   globalSetup: './global.setup.js',
   globalTeardown: './global.teardown.js',
