@@ -1,5 +1,5 @@
-import { BasePage } from './basePage';
-import { RegistrationPopup } from './registrationPopup';
+import  BasePage  from './BasePage';
+import { RegistrationPopup } from './RegistrationPopup';
 
 export class RegistrationPage extends BasePage {
   constructor(page) {
