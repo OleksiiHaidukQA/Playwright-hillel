@@ -32,13 +32,16 @@ test.describe('API Tests for Cars', () => {
   });
 
   test('Positive Test: Create a car', async () => {
+    // Данные автомобиля
+    const carData = {
+      carBrandId: 1,
+      carModelId: 1,
+      mileage: 777,
+    };
+
     // Создание автомобиля
     const response = await apiContext.post('api/cars', {
-      data: {
-        carBrandId: 1,
-        carModelId: 1,
-        mileage: 777,
-      },
+      data: carData,
     });
 
     if (!response.ok()) {
@@ -53,19 +56,22 @@ test.describe('API Tests for Cars', () => {
 
     console.log('Response:', responseBody);
 
+    // Проверка, что данные автомобиля совпадают с отправленными данными
     expect(responseBody.status).toBe('ok');
     expect(responseBody.data).toHaveProperty('id');
-    expect(responseBody.data.carBrandId).toBe(1);
-    expect(responseBody.data.carModelId).toBe(1);
-    expect(responseBody.data.mileage).toBe(777);
+    expect(responseBody.data.carBrandId).toBe(carData.carBrandId);
+    expect(responseBody.data.carModelId).toBe(carData.carModelId);
+    expect(responseBody.data.mileage).toBe(carData.mileage);
   });
 
   test('Negative Test: Create a car with missing fields', async () => {
+    const carData = {
+      carModelId: 1,
+      mileage: 777,
+    };
+
     const response = await apiContext.post('api/cars', {
-      data: {
-        carModelId: 1,
-        mileage: 777,
-      },
+      data: carData,
     });
 
     const responseBody = await response.json().catch((err) => {
@@ -82,12 +88,14 @@ test.describe('API Tests for Cars', () => {
   });
 
   test('Negative Test: Create a car with invalid mileage', async () => {
+    const carData = {
+      carBrandId: 1,
+      carModelId: 1,
+      mileage: -100,
+    };
+
     const response = await apiContext.post('api/cars', {
-      data: {
-        carBrandId: 1,
-        carModelId: 1,
-        mileage: -100,
-      },
+      data: carData,
     });
 
     const responseBody = await response.json().catch((err) => {
