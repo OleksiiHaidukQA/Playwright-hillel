@@ -5,7 +5,9 @@ import { USER1_STORAGE_STATE_PATH } from './data/constants';
 dotenv.config();
 
 export default defineConfig({
-  testDir: './tests',
+
+  testMatch: ['**/tests/profile/profile.mock.spec.js', '**/tests/api/cars.api.spec.js'],
+  testIgnore: '**/tests/**/*.skip.spec.js',
   globalSetup: './global.setup.js',
   globalTeardown: './global.teardown.js',
   fullyParallel: false,
