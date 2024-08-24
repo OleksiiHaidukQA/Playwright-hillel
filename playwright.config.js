@@ -6,7 +6,11 @@ dotenv.config();
 
 export default defineConfig({
 
-  testMatch: ['**/tests/profile/profile.mock.spec.js', '**/tests/api/cars.api.spec.js'],
+  testMatch: [
+    //'**/tests/profile/profile.mock.spec.js',
+    '**/tests/api/*.api.spec.js',
+    //'**/tests/expenses.spec.js', 
+  ],
   testIgnore: '**/tests/**/*.skip.spec.js',
   globalSetup: './global.setup.js',
   globalTeardown: './global.teardown.js',
@@ -40,6 +44,16 @@ export default defineConfig({
       use: {
         ...devices['Desktop Chrome'],
         storageState: USER1_STORAGE_STATE_PATH,
+      },
+    },
+    {
+      name: 'api-tests',  // Новый проект для API тестов
+      use: {
+        baseURL: process.env.BASE_URL_API,  // Убедитесь, что это значение корректно в .env
+        extraHTTPHeaders: {
+          'accept': 'application/json',
+          'Content-Type': 'application/json',
+        },
       },
     },
   ],
