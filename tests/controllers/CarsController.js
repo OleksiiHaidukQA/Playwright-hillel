@@ -4,7 +4,7 @@ class CarsController {
     }
 
     async getBrands() {
-        const response = await this.apiContext.get('/cars/brands', {
+        const response = await this.apiContext.get('api/cars/brands', {
             headers: {
                 'accept': 'application/json',
                 'Content-Type': 'application/json',
@@ -14,7 +14,7 @@ class CarsController {
     }
 
     async getBrandById(id) {
-        const response = await this.apiContext.get(`/cars/brands/${id}`, {
+        const response = await this.apiContext.get(`api/cars/brands/${id}`, {
             headers: {
                 'accept': 'application/json',
                 'Content-Type': 'application/json',
@@ -24,7 +24,7 @@ class CarsController {
     }
 
     async getModels() {
-        const response = await this.apiContext.get('/cars/models', {
+        const response = await this.apiContext.get('api/cars/models', {
             headers: {
                 'accept': 'application/json',
                 'Content-Type': 'application/json',
@@ -34,7 +34,7 @@ class CarsController {
     }
 
     async getModelById(id) {
-        const response = await this.apiContext.get(`/cars/models/${id}`, {
+        const response = await this.apiContext.get(`api/cars/models/${id}`, {
             headers: {
                 'accept': 'application/json',
                 'Content-Type': 'application/json',
@@ -44,7 +44,7 @@ class CarsController {
     }
 
     async getCars() {
-        const response = await this.apiContext.get('/cars', {
+        const response = await this.apiContext.get('api/cars', {
             headers: {
                 'accept': 'application/json',
                 'Content-Type': 'application/json',
@@ -54,18 +54,18 @@ class CarsController {
     }
 
     async createCar(carData) {
-        const response = await this.apiContext.post('/cars', {
+        const response = await this.apiContext.post('api/cars', {
             headers: {
                 'accept': 'application/json',
                 'Content-Type': 'application/json',
             },
-            postData: JSON.stringify(carData)
+            data: carData
         });
         return this.handleResponse(response);
     }
 
     async getCarById(id) {
-        const response = await this.apiContext.get(`/cars/${id}`, {
+        const response = await this.apiContext.get(`api/cars/${id}`, {
             headers: {
                 'accept': 'application/json',
                 'Content-Type': 'application/json',
@@ -75,7 +75,7 @@ class CarsController {
     }
 
     async updateCar(id, carData) {
-        const response = await this.apiContext.put(`/cars/${id}`, {
+        const response = await this.apiContext.put(`api/cars/${id}`, {
             data: carData,
             headers: {
                 'accept': 'application/json',
@@ -86,7 +86,7 @@ class CarsController {
     }
 
     async deleteCar(id) {
-        const response = await this.apiContext.delete(`/cars/${id}`, {
+        const response = await this.apiContext.delete(`api/cars/${id}`, {
             headers: {
                 'accept': 'application/json',
                 'Content-Type': 'application/json',
@@ -95,10 +95,10 @@ class CarsController {
         return this.handleResponse(response);
     }
 
-    handleResponse(response) {
-        console.log(response); 
+    async handleResponse(response) {
+        console.log(await response.json()); 
         if (!response.ok()) {
-            const errorText = response.statusText || 'Unknown error'; 
+            const errorText = response.statusText() || 'Unknown error'; 
             throw new Error(`API request failed: ${errorText}`);
         }
         return response.json();
