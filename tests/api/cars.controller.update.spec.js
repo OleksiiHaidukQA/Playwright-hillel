@@ -10,17 +10,17 @@ test.describe('API Tests for Cars - Update', () => {
         const apiContext = await getAuthorizedContext();
         carsController = new CarsController(apiContext);
 
-        const carsResponse = await carsController.getCars();
-        expect(carsResponse.status).toBe('ok');
+        const carData = {
+            carBrandId: 1,
+            carModelId: 1,
+            mileage: 100,
+        };
 
-        if (carsResponse.data.length > 0) {
-            carId = carsResponse.data[0].id;
-        } else {
-            throw new Error('Нет доступных машин для обновления.');
-        }
+        const response = await carsController.createCar(carData);
+        carId = response.data.id;
     });
 
-    test('Positive Test: Update a car mileage', async () => {
+    test('Positive Test: Update a car', async () => {
         const updatedData = {
             mileage: 200,
         };
@@ -29,10 +29,12 @@ test.describe('API Tests for Cars - Update', () => {
         expect(response.status).toBe('ok');
         expect(response.data).toMatchObject({
             id: carId,
+            carBrandId: 1,
+            carModelId: 1,
             mileage: updatedData.mileage,
+            brand: 'Audi',
+            model: 'TT',
+            logo: 'audi.png',
         });
-
-        expect(response.data.carBrandId).toBe(1); 
-        expect(response.data.carModelId).toBe(1); 
     });
 });

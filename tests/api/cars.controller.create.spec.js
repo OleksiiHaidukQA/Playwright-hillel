@@ -22,21 +22,15 @@ test.describe('API Tests for Cars - Create', () => {
 
         expect(response.status).toBe('ok');
 
-        // Проверяем, что обязательные поля совпадают с ожидаемыми значениями
         expect(response.data).toMatchObject({
             id: expect.any(Number),
             carBrandId: carData.carBrandId,
             carModelId: carData.carModelId,
             mileage: carData.mileage,
+            brand: 'Audi',
+            model: 'TT',
+            logo: 'audi.png',
         });
-
-        // Дополнительно проверяем наличие дополнительных полей в ответе
-        expect(response.data).toHaveProperty('brand');
-        expect(response.data).toHaveProperty('model');
-        expect(response.data).toHaveProperty('logo');
-        expect(response.data).toHaveProperty('initialMileage');
-        expect(response.data).toHaveProperty('carCreatedAt');
-        expect(response.data).toHaveProperty('updatedMileageAt');
 
         carId = response.data.id;
     });

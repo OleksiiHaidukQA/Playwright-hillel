@@ -4,33 +4,26 @@ import { getAuthorizedContext } from '../utils/apiAuth';
 
 test.describe('API Tests for Cars - Delete', () => {
     let carsController;
-    let carId;
 
     test.beforeAll(async () => {
         const apiContext = await getAuthorizedContext();
         carsController = new CarsController(apiContext);
+    });
 
-        // Создаем машину для удаления
+    test('Positive Test: Delete a car', async () => {
         const carData = {
             carBrandId: 1,
             carModelId: 1,
             mileage: 100,
         };
-        const createResponse = await carsController.createCar(carData);
-        expect(createResponse.status).toBe('ok');
+        const createdCar = await carsController.createCar(carData);
+        const carId = createdCar.data.id;
 
-        carId = createResponse.data.id;
-    });
-
-    test('Positive Test: Delete a car', async () => {
         const response = await carsController.deleteCar(carId);
         expect(response.status).toBe('ok');
 
-        try {
-            await carsController.getCarById(carId);
-            throw new Error('Car was not deleted');
-        } catch (error) {
-            expect(error.message).toContain('Not Found');
-        }
+        const allCarsResponse = await carsController.getCars();
+        const deletedCar = allCarsResponse.data.find(car => car.id === carId);
+        expect(deletedCar).toBeUndefined();
     });
 });
