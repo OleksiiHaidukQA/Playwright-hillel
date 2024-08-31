@@ -7,8 +7,9 @@ dotenv.config();
 export default defineConfig({
 
   testMatch: [
+    '**/tests/api/cars.controller.*.spec.js',
     //'**/tests/profile/profile.mock.spec.js',
-    '**/tests/api/*.api.spec.js',
+    //'**/tests/api/*.api.spec.js',
     //'**/tests/expenses.spec.js', 
   ],
   testIgnore: '**/tests/**/*.skip.spec.js',
@@ -34,18 +35,18 @@ export default defineConfig({
     screenshot: 'only-on-failure'
   },
   projects: [
-    {
-      name: 'setup',
-      testMatch: 'tests/setup/saveStorageState.js', 
-    },
-    {
-      name: 'chromium',
-      dependencies: ['setup'], 
-      use: {
-        ...devices['Desktop Chrome'],
-        storageState: USER1_STORAGE_STATE_PATH,
-      },
-    },
+    // {
+    //   name: 'setup',
+    //   testMatch: 'tests/setup/saveStorageState.js', 
+    // },
+    // {
+    //   name: 'chromium',
+    //   dependencies: ['setup'], 
+    //   use: {
+    //     ...devices['Desktop Chrome'],
+    //     storageState: USER1_STORAGE_STATE_PATH,
+    //   },
+    // },
     {
       name: 'api-tests',  // Новый проект для API тестов
       use: {
