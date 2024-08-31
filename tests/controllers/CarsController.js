@@ -3,105 +3,58 @@ class CarsController {
         this.apiContext = apiContext;
     }
 
-    async getBrands() {
-        const response = await this.apiContext.get('api/cars/brands', {
-            headers: {
-                'accept': 'application/json',
-                'Content-Type': 'application/json',
-            },
-        });
-        return this.handleResponse(response);
-    }
-
-    async getBrandById(id) {
-        const response = await this.apiContext.get(`api/cars/brands/${id}`, {
-            headers: {
-                'accept': 'application/json',
-                'Content-Type': 'application/json',
-            },
-        });
-        return this.handleResponse(response);
-    }
-
-    async getModels() {
-        const response = await this.apiContext.get('api/cars/models', {
-            headers: {
-                'accept': 'application/json',
-                'Content-Type': 'application/json',
-            },
-        });
-        return this.handleResponse(response);
-    }
-
-    async getModelById(id) {
-        const response = await this.apiContext.get(`api/cars/models/${id}`, {
-            headers: {
-                'accept': 'application/json',
-                'Content-Type': 'application/json',
-            },
-        });
+    async createCar(carData) {
+        const response = await this.apiContext.post('api/cars', { data: carData });
         return this.handleResponse(response);
     }
 
     async getCars() {
-        const response = await this.apiContext.get('api/cars', {
-            headers: {
-                'accept': 'application/json',
-                'Content-Type': 'application/json',
-            },
-        });
+        const response = await this.apiContext.get('api/cars');
         return this.handleResponse(response);
     }
 
-    async createCar(carData) {
-        const response = await this.apiContext.post('api/cars', {
-            headers: {
-                'accept': 'application/json',
-                'Content-Type': 'application/json',
-            },
-            data: carData
-        });
+    async deleteCar(carId) {
+        const response = await this.apiContext.delete(`api/cars/${carId}`);
         return this.handleResponse(response);
     }
 
-    async getCarById(id) {
-        const response = await this.apiContext.get(`api/cars/${id}`, {
-            headers: {
-                'accept': 'application/json',
-                'Content-Type': 'application/json',
-            },
-        });
+    async updateCar(carId, updatedData) {
+        const response = await this.apiContext.put(`api/cars/${carId}`, { data: updatedData });
         return this.handleResponse(response);
     }
 
-    async updateCar(id, carData) {
-        const response = await this.apiContext.put(`api/cars/${id}`, {
-            data: carData,
-            headers: {
-                'accept': 'application/json',
-                'Content-Type': 'application/json',
-            },
-        });
+    async getBrands() {
+        const response = await this.apiContext.get('api/cars/brands');
         return this.handleResponse(response);
     }
 
-    async deleteCar(id) {
-        const response = await this.apiContext.delete(`api/cars/${id}`, {
-            headers: {
-                'accept': 'application/json',
-                'Content-Type': 'application/json',
-            },
-        });
+    async getBrandById(brandId) {
+        const response = await this.apiContext.get(`api/cars/brands/${brandId}`);
+        return this.handleResponse(response);
+    }
+
+    async getModels() {
+        const response = await this.apiContext.get('api/cars/models');
+        return this.handleResponse(response);
+    }
+
+    async getModelById(modelId) {
+        const response = await this.apiContext.get(`api/cars/models/${modelId}`);
         return this.handleResponse(response);
     }
 
     async handleResponse(response) {
-        console.log(await response.json()); 
+        const responseText = await response.text();
+        console.log('Response Text:', responseText);
         if (!response.ok()) {
-            const errorText = response.statusText() || 'Unknown error'; 
+            const errorText = response.statusText() || 'Unknown error';
             throw new Error(`API request failed: ${errorText}`);
         }
-        return response.json();
+        try {
+            return JSON.parse(responseText);
+        } catch (error) {
+            throw new Error(`Failed to parse JSON: ${error.message}`);
+        }
     }
 }
 

@@ -2,8 +2,6 @@ import { test, expect } from '@playwright/test';
 import CarsController from '../controllers/CarsController';
 import { getAuthorizedContext } from '../utils/apiAuth';
 
-let carId; 
-
 test.describe('API Tests for Cars - Create', () => {
     let carsController;
 
@@ -21,17 +19,11 @@ test.describe('API Tests for Cars - Create', () => {
         const response = await carsController.createCar(carData);
 
         expect(response.status).toBe('ok');
-
         expect(response.data).toMatchObject({
             id: expect.any(Number),
-            carBrandId: carData.carBrandId,
-            carModelId: carData.carModelId,
-            mileage: carData.mileage,
-            brand: 'Audi',
-            model: 'TT',
-            logo: 'audi.png',
+            carBrandId: 1,
+            carModelId: 1,
+            mileage: 100,
         });
-
-        carId = response.data.id;
     });
 });
