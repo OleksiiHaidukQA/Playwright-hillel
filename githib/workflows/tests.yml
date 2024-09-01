@@ -1,0 +1,28 @@
+name: "Playwright-tests"
+
+on: push
+
+jobs: 
+  api-tests:
+    runs-on: ubuntu-22.04
+    container: 'mcr.microsoft.com/playwright:v1.45.3-jammy'
+    steps: 
+      - name: "Checkout to test repository"
+      uses: actions/checkout@v4
+      with:
+        ref: '${{ github.ref }}'
+      - name: "Instal node js"
+      uses: actions/setup-node@v4
+      with: 
+        node-version: 20
+      - name: "Install dependencies"
+      run: npm ci
+      - name: "Run tests"
+      run: npm run test
+      - name: "Upload report to artifacts"
+      if: always()
+      uses: uses: actions/upload-artifact@v4
+      with: 
+        name: ci-report
+        path: playwright-report/
+        retention-days: 3
