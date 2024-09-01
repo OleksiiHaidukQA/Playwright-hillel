@@ -21,6 +21,15 @@ jobs:
         run: npm ci
         
       - name: "Run tests"
+        env: 
+          BASE_URL: https://qauto.forstudy.space/
+          USERNAME: guest
+          PASSWORD: welcome2qauto
+          BASE_URL_API: https://qauto.forstudy.space/api
+          DEFAULT_USER_EMAIL: oleksiihaidukqa@gmail.com
+          DEFAULT_USER_PASSWORD: Q123q123_
+          CAR_USER_EMAIL: carEmail@test.com
+          CAR_USER_PASSWORD: Q123q123_
         run: npm run test
         
       - name: "Upload report to artifacts"
