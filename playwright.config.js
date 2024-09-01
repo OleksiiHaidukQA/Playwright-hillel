@@ -48,9 +48,9 @@ export default defineConfig({
     //   },
     // },
     {
-      name: 'api-tests',  // Новый проект для API тестов
+      name: 'api-tests',  
       use: {
-        baseURL: process.env.BASE_URL_API,  // Убедитесь, что это значение корректно в .env
+        baseURL: process.env.BASE_URL_API,  
         extraHTTPHeaders: {
           'accept': 'application/json',
           'Content-Type': 'application/json',
