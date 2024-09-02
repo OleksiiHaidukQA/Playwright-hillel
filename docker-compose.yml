@@ -1,0 +1,13 @@
+version: '2'
+
+services:
+  pw-tests:
+    container_name: 'api-tests'
+    build: 
+      context: .
+      dockerfile: Dockerfile
+    environment:
+      - CI=true
+      - .env
+    volumes:
+      - /Users/oleksiihaiduk/playwright-hillel/playwright-report
